@@ -34,6 +34,11 @@ export const config = {
           return null;
         }
 
+        // Check if email is verified
+        if (!user.email_verified) {
+          throw new Error("Email not verified. Please check your email for verification link.");
+        }
+
         const isValid = await bcrypt.compare(
           credentials.password as string,
           user.password_hash
@@ -62,10 +67,16 @@ export const config = {
         );
 
         if (result.rows.length === 0) {
-          // Create new user
+          // Create new user with email verified (OAuth emails are pre-verified)
           await pool.query(
             "INSERT INTO users (email, name, image, email_verified) VALUES ($1, $2, $3, $4)",
             [user.email, user.name, user.image, true]
+          );
+        } else {
+          // If user exists but email not verified, verify it now (OAuth)
+          await pool.query(
+            "UPDATE users SET email_verified = true, name = COALESCE($1, name), image = COALESCE($2, image) WHERE email = $3",
+            [user.name, user.image, user.email]
           );
         }
 

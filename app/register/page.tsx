@@ -43,26 +43,33 @@ export default function RegisterPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            name: formData.userName,
+          }),
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-          setError(data.error || "Registration failed");
-        } else {
-          // Auto sign in after registration
-          const result = await signIn("credentials", {
-            email: formData.email,
-            password: formData.password,
-            redirect: false,
-          });
-
-          if (result?.error) {
-            setError("Registration successful, but sign in failed. Please try signing in.");
+          if (data.requiresVerification) {
+            setError(
+              "Email not verified. Please check your email for the verification link. " +
+              (data.verificationUrl ? `\n\nVerification link: ${data.verificationUrl}` : "")
+            );
           } else {
-            router.push("/dashboard");
-            router.refresh();
+            setError(data.error || "Registration failed");
+          }
+        } else {
+          // Registration successful, but email needs verification
+          if (data.requiresVerification) {
+            setError(
+              "Registration successful! Please check your email to verify your account before signing in. " +
+              (data.verificationUrl ? `\n\nVerification link (dev only): ${data.verificationUrl}` : "")
+            );
+            // Clear form after showing message
+            setFormData({ email: "", password: "", userName: "" });
           }
         }
       }
@@ -145,7 +152,7 @@ export default function RegisterPage() {
                   htmlFor="userName"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                 >
-                  userName
+                  Username
                 </label>
                 <input
                   id="userName"
@@ -202,7 +209,11 @@ export default function RegisterPage() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
+              <div className={`p-3 border rounded-lg text-sm whitespace-pre-line ${
+                error.includes("Registration successful") || error.includes("Verification link")
+                  ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400"
+                  : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400"
+              }`}>
                 {error}
               </div>
             )}
