@@ -40,6 +40,7 @@ export default function VerifyEmailPage() {
           setMessage(data.error || "Verification failed. The link may have expired.");
         }
       } catch (error) {
+        console.error(error);
         setStatus("error");
         setMessage("An error occurred during verification. Please try again.");
       }

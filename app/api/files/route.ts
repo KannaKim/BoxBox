@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { s3Client, S3_BUCKET_NAME, getCloudFrontUrl } from "@/lib/s3";
+import { s3Client, S3_BUCKET_NAME } from "@/lib/s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import pool from "@/lib/db";
 
 export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
+  void request;
   try {
     // Check authentication
     const session = await auth();

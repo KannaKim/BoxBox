@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     );
 
     const user = result.rows[0];
-
+    void user;
     // Generate verification token
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const expires = new Date();

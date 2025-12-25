@@ -58,7 +58,7 @@ export const config = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       if (account?.provider === "google") {
         // Check if user exists, if not create one
         const result = await pool.query(
@@ -118,7 +118,7 @@ export const config = {
       }
       return true;
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
       }

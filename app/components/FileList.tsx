@@ -51,6 +51,7 @@ export default function FileList() {
       // Remove file from list
       setFiles(files.filter((file) => file.key !== fileKey));
     } catch (err) {
+      console.error(err);
       alert("Failed to delete file. Please try again.");
     }
   };
