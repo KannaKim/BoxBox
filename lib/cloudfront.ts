@@ -1,9 +1,9 @@
 import { getSignedCookies } from "@aws-sdk/cloudfront-signer";
 
-export const CLOUDFRONT_KEY_PAIR_ID = process.env.AWS_CLOUDFRONT_KEY_PAIR_ID || "";
+export const CLOUDFRONT_KEY_PAIR_ID = process.env.CLOUDFRONT_KEY_PAIR_ID_AWS || "";
 
 // Decode base64-encoded PEM private key (conventional way to store in env vars)
-const encodedKey = process.env.AWS_CLOUDFRONT_PRIVATE_KEY || "";
+const encodedKey = process.env.CLOUDFRONT_PRIVATE_KEY_AWS || "";
 export const CLOUDFRONT_PRIVATE_KEY = encodedKey
   ? Buffer.from(encodedKey, "base64").toString("utf-8")
   : "";
