@@ -125,6 +125,7 @@ export const config = {
       return token;
     },
     async session({ session, token }) {
+      console.log("auth trust host", process.env.AUTH_TRUST_HOST)
       if (session.user) {
         session.user.id = token.id as string;
       }
