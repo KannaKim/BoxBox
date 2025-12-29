@@ -6,7 +6,8 @@ import pool from "./lib/db";
 import bcrypt from "bcryptjs";
 
 console.log("auth trust host:", process.env.AUTH_TRUST_HOST)
-
+console.log("authurl:", process.env.AUTH_URL)
+console.log("authsecret:", process.env.AUTH_SECRET)
 export const config = {
   secret: process.env.AUTH_SECRET,
   providers: [
