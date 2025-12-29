@@ -5,6 +5,8 @@ import Google from "next-auth/providers/google";
 import pool from "./lib/db";
 import bcrypt from "bcryptjs";
 
+console.log("auth trust host:", process.env.AUTH_TRUST_HOST)
+
 export const config = {
   secret: process.env.AUTH_SECRET,
   providers: [
@@ -125,7 +127,6 @@ export const config = {
       return token;
     },
     async session({ session, token }) {
-      console.log("auth trust host", process.env.AUTH_TRUST_HOST)
       if (session.user) {
         session.user.id = token.id as string;
       }
