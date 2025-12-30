@@ -132,7 +132,7 @@ export const config = {
     },
   },
   pages: {
-    signIn: "/register",
+    signIn: "/signin",
   },
 } satisfies NextAuthConfig;
 

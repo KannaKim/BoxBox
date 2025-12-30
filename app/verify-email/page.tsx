@@ -33,7 +33,7 @@ function VerifyEmailContent() {
           setMessage("Email verified successfully! You can now sign in.");
           // Redirect to login after 2 seconds
           setTimeout(() => {
-            router.push("/register");
+            router.push("/signin");
           }, 2000);
         } else {
           setStatus("error");
@@ -87,7 +87,7 @@ function VerifyEmailContent() {
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mb-6">{message}</p>
               <Link
-                href="/register"
+                href="/signin"
                 className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
               >
                 Sign In Now
@@ -118,7 +118,7 @@ function VerifyEmailContent() {
               <p className="text-gray-600 dark:text-gray-400 mb-6">{message}</p>
               <div className="flex flex-col gap-3">
                 <Link
-                  href="/register"
+                  href="/signin"
                   className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
                 >
                   Back to Sign In

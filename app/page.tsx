@@ -18,13 +18,13 @@ export default async function LandingPage() {
         </div>
         <div className="flex gap-4">
           <Link
-            href="/register"
+            href="/signin"
             className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             Sign In
           </Link>
           <Link
-            href="/register"
+            href="/signin"
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
             Get Started
@@ -47,7 +47,7 @@ export default async function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/register"
+              href="/signin"
               className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg shadow-lg hover:shadow-xl"
             >
               Start Free Trial
