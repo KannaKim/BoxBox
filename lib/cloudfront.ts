@@ -1,4 +1,4 @@
-import { getSignedCookies } from "@aws-sdk/cloudfront-signer";
+import { getSignedCookies, getSignedUrl } from "@aws-sdk/cloudfront-signer";
 
 export const CLOUDFRONT_KEY_PAIR_ID = process.env.CLOUDFRONT_KEY_PAIR_ID_AWS || "";
 
@@ -7,6 +7,7 @@ const encodedKey = process.env.CLOUDFRONT_PRIVATE_KEY_AWS || "";
 export const CLOUDFRONT_PRIVATE_KEY = encodedKey
   ? Buffer.from(encodedKey, "base64").toString("utf-8")
   : "";
+
 /**
  * Generate CloudFront signed cookies for a resource
  * @param resourceUrl - The CloudFront URL of the resource
@@ -31,5 +32,31 @@ export function getCloudFrontSignedCookies(
   });
 
   return cookies;
+}
+
+/**
+ * Generate CloudFront signed URL for a resource
+ * @param resourceUrl - The CloudFront URL of the resource
+ * @param expiresIn - Expiration time in seconds (default: 1 hour)
+ * @returns Signed URL string
+ */
+export function getCloudFrontSignedUrl(
+  resourceUrl: string,
+  expiresIn: number = 3600
+): string {
+  if (!CLOUDFRONT_KEY_PAIR_ID || !CLOUDFRONT_PRIVATE_KEY) {
+    throw new Error("CloudFront key pair ID and private key must be configured");
+  }
+
+  const expiresAt = Math.floor(Date.now() / 1000) + expiresIn;
+
+  const signedUrl = getSignedUrl({
+    url: resourceUrl,
+    keyPairId: CLOUDFRONT_KEY_PAIR_ID,
+    privateKey: CLOUDFRONT_PRIVATE_KEY,
+    dateLessThan: new Date(expiresAt * 1000).toISOString(),
+  });
+
+  return signedUrl;
 }
 

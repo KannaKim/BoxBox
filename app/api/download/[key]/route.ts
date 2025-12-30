@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getCloudFrontUrl } from "@/lib/s3";
-import { getCloudFrontSignedCookies } from "@/lib/cloudfront";
+import { getCloudFrontSignedUrl } from "@/lib/cloudfront";
 import pool from "@/lib/db";
 
 export const runtime = "nodejs";
@@ -32,23 +32,35 @@ export async function GET(
     const file = fileResult.rows[0];
     const cloudFrontUrl = getCloudFrontUrl(file.s3_key);
 
-    // Generate signed cookies
-    const cookies = getCloudFrontSignedCookies(cloudFrontUrl, 3600); // 1 hour expiration
-    console.log("cookies", cookies);
-    // Create response with redirect
-    const response = NextResponse.redirect(cloudFrontUrl);
+    // Generate signed URL (valid for 1 hour)
+    const signedUrl = getCloudFrontSignedUrl(cloudFrontUrl, 3600);
 
-    // Set signed cookies
-    Object.entries(cookies).forEach(([name, value]) => {
-      response.cookies.set(name, value, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-        path: "/",
-      });
+    // Fetch the file from CloudFront
+    const fileResponse = await fetch(signedUrl);
+    if (!fileResponse.ok) {
+      return NextResponse.json(
+        { error: "Failed to fetch file from CloudFront" },
+        { status: fileResponse.status }
+      );
+    }
+
+    // Get the file content
+    const fileBuffer = await fileResponse.arrayBuffer();
+
+    // Get content type from CloudFront response or default to binary
+    const contentType = fileResponse.headers.get("content-type") || "application/octet-stream";
+
+    // Create response with download headers
+    return new NextResponse(fileBuffer, {
+      headers: {
+        "Content-Type": contentType,
+        "Content-Disposition": `attachment; filename="${encodeURIComponent(file.original_filename)}"`,
+        "Content-Length": fileBuffer.byteLength.toString(),
+        "Cache-Control": "private, no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+      },
     });
-
-    return response;
   } catch (error) {
     console.error("Download error:", error);
     return NextResponse.json(
